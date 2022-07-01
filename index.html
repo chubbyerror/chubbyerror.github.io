@@ -46,6 +46,55 @@
         })();
 
         document.ready(function () {
+                    const app = new PIXI.Application({ backgroundColor: 0x1099bb, width: 200, height: 200 });
+
+
+        /* ---------------------
+         Spinner 5. Rounded rectangle fixed length spinner by jonlepage
+        -------------------- */
+        const generateSpinner5 = (position) => {
+            const container = new PIXI.Container();
+            container.position = position;
+            app.stage.addChild(container);
+
+            const halfCircle = new PIXI.Graphics();
+            halfCircle.beginFill(0xff0000);
+            halfCircle.lineStyle(2, 0xffffff);
+            halfCircle.arc(0, 0, 100, 0, Math.PI);
+            halfCircle.endFill();
+            halfCircle.position.set(50, 50);
+
+            const rectangle = new PIXI.Graphics();
+            rectangle.lineStyle(2, 0xffffff, 1);
+            rectangle.drawRoundedRect(0, 0, 100, 100, 16);
+            rectangle.endFill();
+            rectangle.mask = halfCircle;
+
+            container.addChild(rectangle);
+            container.addChild(halfCircle);
+
+            let phase = 0;
+            return (delta) => {
+                // Update phase
+                phase += delta / 6;
+                phase %= (Math.PI * 2);
+
+                halfCircle.rotation = phase;
+            };
+        };
+
+        const onTick = [
+            generateSpinner5(new PIXI.Point(50, 50)),
+        ];
+
+        // Listen for animate update
+        app.ticker.add((delta) => {
+            // Call tick handling for each spinner.
+            onTick.forEach((cb) => {
+                cb(delta);
+            });
+        });
+
             document.getElementById('context').appendChild(app.view);
 
             var c1 = document.createElement('canvas'); //创建处理画布对象
